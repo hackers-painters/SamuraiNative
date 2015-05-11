@@ -29,7 +29,7 @@
 //
 
 #import "Samurai_UIButton.h"
-
+#import "Samurai_HtmlDomNode.h"
 #import "_pragma_push.h"
 
 #if (TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR)
@@ -145,12 +145,29 @@
 
 + (id)createInstanceWithRenderer:(SamuraiRenderObject *)renderer identifier:(NSString *)identifier
 {
-	UIButton * button = [self buttonWithType:UIButtonTypeCustom];
-
+    NSString* typeStr = (NSString*)[renderer.dom.domAttributes objectForKey:@"type"];
+    UIButtonType type = UIButtonTypeCustom;
+    if (typeStr) {
+        if ([typeStr isEqualToString: @"custom"])
+            type = UIButtonTypeCustom;
+#if (defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_7_0)
+        else if ([typeStr isEqualToString: @"system"])
+            type = UIButtonTypeSystem;
+#endif
+        else if ([typeStr isEqualToString: @"detail-disclosure"])
+            type = UIButtonTypeDetailDisclosure;
+        else if ([typeStr isEqualToString: @"info-light"])
+            type = UIButtonTypeInfoLight;
+        else if ([typeStr isEqualToString: @"info-dark"])
+            type = UIButtonTypeInfoDark;
+        else if ([typeStr isEqualToString: @"contact-add"])
+            type = UIButtonTypeContactAdd;
+        else if ([typeStr isEqualToString: @"rounded-rect"])
+            type = UIButtonTypeRoundedRect;
+    }
+    UIButton* button = [UIButton buttonWithType:type];
 	button.renderer = renderer;
-	
 	[[button buttonAgent] enableEvents];
-	
 	return button;
 }
 
