@@ -85,7 +85,7 @@
 
 #if __SAMURAI_TESTING__
 
-TEST_CASE( UI, HtmlElement_ui )
+TEST_CASE( UI, HtmlElement )
 
 DESCRIBE( before )
 {
