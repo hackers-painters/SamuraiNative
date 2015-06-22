@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html class="no-js no-scroll" lang="">
+    <head>
+        <title>配对小鹿盒子</title>
+        <meta charset="utf-8"/>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+        
+        <meta name="description" content=""/>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        
+        <link rel="stylesheet" type="text/css" href="../css/normalize.css"/>
+        <link rel="stylesheet" type="text/css" href="../css/main.css"/>
+        <link rel="stylesheet" type="text/css" href="../css/common.css"/>
+        <link rel="stylesheet" type="text/css" href="SDWebImageView.css"/>
+        
+    </head>
+    
+    <body>
+        <div class="scan" id="scan">
+            <UIActivityIndicatorView class="activity1" is-animating></UIActivityIndicatorView>
+            <UILabel class="scan-label1">正在为您玩命搜索...</UILabel>
+            <UILabel class="scan-label2" name="findBoxName">发现 xxx设备</UILabel>
+        </div>
+        
+        <div class="analyse" id="analyse">
+            <UILabel class="analyse-label1" name="findBoxName2">成功匹配 xxx设备</UILabel>
+            <UILabel class="analyse-label2">正在分析数据</UILabel>
+            <div class="analyse-row">
+                <UILabel class="analyse-label3">1.校验数据</UILabel>
+                <UIActivityIndicatorView class="activity2" is-animating></UIActivityIndicatorView>
+            </div>
+            <div class="analyse-row">
+                <UILabel class="analyse-label3">2.匹配云端数据</UILabel>
+                <UIActivityIndicatorView class="activity2" is-animating></UIActivityIndicatorView>
+            </div>
+            <div class="analyse-row">
+                <UILabel class="analyse-label3">3.收集设备异常</UILabel>
+                <UIActivityIndicatorView class="activity2" is-animating></UIActivityIndicatorView>
+            </div>
+        </div>
+        
+        <div class="test-bottom">
+            <UIButton class="test-button" onclick="signal('view1')">界面1</UIButton>
+            <UIButton class="test-button" onclick="signal('view2')">界面2</UIButton>
+            <UIButton class="test-button" onclick="signal('view3')">界面3</UIButton>
+            <UIButton class="test-button" onclick="signal('view4')">界面4</UIButton>
+        </div>
+        
+        <div class="bottom">
+            <UIButton class="bottom-button" onclick="signal('cloudCheck')">云检测</UIButton>
+        </div>
+    </body>
+    
+    <style>
+        
+        body {
+            width: 100%;
+            height: 100%;
+            background-color: #fff;
+        }
+    
+    div {
+        height: 25px;
+        background-color: #fff;
+    }
+    
+    p, label, UILabel {
+        width: 100%;
+        color: #969696;
+        font-size: 14px;
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+    .bottom {
+        position: absolute;
+        bottom: 0px;
+        display: block
+        width: 100%;
+        height: 40px;
+    }
+    .bottom-button {
+        width: 100%;
+        height: 100%;
+        color: white;
+        background-color: #3BBEB6;
+    }
+    .test-bottom {
+        position: absolute;
+        bottom: 50px;
+        display: block
+        width: 100%;
+        height: 40px;
+    }
+    .test-button{
+        width: 25%;
+        height: 100%;
+        color: white;
+        background-color: #3BBEB6;
+    }
+    .hidden2
+    {
+        display: none;
+        background-color: #aaa;
+    }
+    /*
+     search
+     */
+    .scan{
+        margin-top: 100px;
+        width: 100%;
+        height: 200px;
+    }
+    .activity1 {
+        display: inline-block;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 30px
+        color: orange;
+    }
+    .scan-label1{
+        margin-top: 30px;
+        font-size: 18px;
+        text-align: center;
+    }
+    .scan-label2{
+        text-align: center;
+    }
+    /*
+     search
+     */
+    .activity2 {
+        margin-left: 10px;
+        margin-top: 15px;
+        width: 30px;
+        height: 30px
+        color: blue;
+    }
+    .analyse-label1 {
+        font-size: 16px;
+        margin-left: 30px;
+    }
+    .analyse-label2 {
+        font-size: 12px;
+        margin-left: 50px;
+    }
+    .analyse-label3 {
+        font-size: 12px;
+        width: 100px;
+        margin-left: 80px;
+    }
+    </style>
+</html>
