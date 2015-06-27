@@ -42,8 +42,11 @@
 
 @interface UICollectionViewCell(Samurai)
 
-- (void)dataWillChange;
-- (void)dataDidChanged;
+- (void)dataWillChange;			// override point
+- (void)dataDidChanged;			// override point
+
+- (void)cellWillDisplay;		// override point
+- (void)cellDidDisplay;			// override point
 
 @end
 

@@ -59,22 +59,22 @@
 
 + (BOOL)supportTapGesture
 {
-	return YES;
+	return NO;
 }
 
 + (BOOL)supportSwipeGesture
 {
-	return YES;
+	return NO;
 }
 
 + (BOOL)supportPinchGesture
 {
-	return YES;
+	return NO;
 }
 
 + (BOOL)supportPanGesture
 {
-	return YES;
+	return NO;
 }
 
 #pragma mark -
@@ -95,6 +95,16 @@
 }
 
 #pragma mark -
+
+- (void)applyDom:(SamuraiDomNode *)dom
+{
+	[super applyDom:dom];
+}
+
+- (void)applyStyle:(SamuraiRenderStyle *)style
+{
+	[super applyStyle:style];
+}
 
 - (void)applyFrame:(CGRect)frame
 {

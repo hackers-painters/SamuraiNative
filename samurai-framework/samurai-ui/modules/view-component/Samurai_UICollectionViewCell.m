@@ -50,6 +50,7 @@
 	UICollectionViewCell * collectionViewCell = [[self alloc] initWithFrame:CGRectZero];
 	
 	collectionViewCell.renderer = renderer;
+	
 //	collectionViewCell.reuseIdentifier = identifier;
 	collectionViewCell.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
 	collectionViewCell.userInteractionEnabled = YES;
@@ -83,10 +84,18 @@
 
 - (void)dataWillChange
 {
-	
 }
 
 - (void)dataDidChanged
+{
+}
+
+- (void)cellWillDisplay
+{
+	
+}
+
+- (void)cellDidDisplay
 {
 	
 }
@@ -95,43 +104,28 @@
 
 - (id)serialize
 {
-	SamuraiRenderObject * renderObject = [self renderer];
-	if ( nil == renderObject )
-		return nil;
-
-	return [[SamuraiRenderStoreScope storeScope:renderObject] getData];
+	return nil;
 }
 
 - (void)unserialize:(id)obj
 {
-	SamuraiRenderObject * renderObject = [self renderer];
-	if ( nil == renderObject )
-		return;
-	
-	[self dataWillChange];
-	
-	for ( SamuraiRenderObject * childRender in renderObject.childs )
-	{
-		[[SamuraiRenderStoreScope storeScope:childRender] setData:obj];
-	}
-	
-	[self dataDidChanged];
 }
 
 - (void)zerolize
 {
-	SamuraiRenderObject * renderObject = [self renderer];
-	if ( nil == renderObject )
-		return;
-
-	[self dataWillChange];
-
-	[[SamuraiRenderStoreScope storeScope:renderObject] clearData];
-	
-	[self dataDidChanged];
 }
 
 #pragma mark -
+
+- (void)applyDom:(SamuraiDomNode *)dom
+{
+	[super applyDom:dom];
+}
+
+- (void)applyStyle:(SamuraiRenderStyle *)style
+{
+	[super applyStyle:style];
+}
 
 - (void)applyFrame:(CGRect)frame
 {

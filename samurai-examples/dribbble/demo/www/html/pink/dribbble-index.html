@@ -20,8 +20,6 @@
 
 		<link rel="stylesheet" type="text/css" href="../../css/reset.css"/>
 		<link rel="stylesheet" type="text/css" href="../../css/main.css"/>
-		<link rel="stylesheet" type="text/css" href="SDWebImageView.css"/>
-		<link rel="stylesheet" type="text/css" href="EMStringLabel.css"/>
 
 	</head>
 
@@ -43,7 +41,7 @@
 			onswipe-left="@selector(nextTab:)"
 			onswipe-right="@selector(prevTab:)">
 
-			<UICollectionViewCell name="shots" class="list-item" is-column onclick="@selector(viewShot:)">
+			<UICollectionViewCell name="section-shots" class="list-item" is-column onclick="@selector(viewShot:)">
 				<img name="shot-url" class="shot-img"/>
 				<!--
 				<div class="shot-author">
@@ -59,13 +57,13 @@
 			body {
 				width: 100%;
 				height: 100%;
+				background-color: #e5508c;
 			}
 
 			.tab-bar {
 				display: block;
 				width: 100%;
 				height: 34px;
-				background-color: #e5508c;
 				/* box-shadow: 0px 0.5px 0.5px black; */
 				z-index: 2;
 			}
@@ -92,9 +90,7 @@
 				color: #fff;
 				font-size: 14px;
 				font-weight: bold;
-				background-color: #e5508c;
-				border-bottom-color: white;
-				border-bottom-width: 2px;
+				border-bottom: 2px solid white;
 			}
 
 			.list {
@@ -102,8 +98,8 @@
 				width: 100%;
 				height: 100%;
 				inset-bottom: 34px;
-				z-index: 1;
-				background-color: #e5508c;
+				inset-left: 2px;
+				inset-right: 2px;
 			}
 
 			.list-item {
@@ -118,7 +114,6 @@
 				inset: 2px;
 				background-color: #eee;
 				border-radius: 2px;
-				border-width: 2px;
 				border-color: white;
 			}
 

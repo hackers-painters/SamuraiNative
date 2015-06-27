@@ -108,6 +108,9 @@
 
 @def_prop_assign( NSInteger,				index );
 @def_prop_assign( CGRect,					bounds );
+@def_prop_assign( NSUInteger,				lines );
+@def_prop_assign( CGPoint,					start );
+@def_prop_assign( CGPoint,					end );
 
 @def_prop_assign( UIEdgeInsets,				inset );
 @def_prop_assign( UIEdgeInsets,				border );
@@ -158,7 +161,7 @@ static NSUInteger __objectSeed = 0;
 
 		self.index = 0;
 		self.bounds = CGRectZero;
-		
+
 		self.inset = UIEdgeInsetsZero;
 		self.margin = UIEdgeInsetsZero;
 		self.padding = UIEdgeInsetsZero;
@@ -273,6 +276,8 @@ static NSUInteger __objectSeed = 0;
 		Class classType = NSClassFromString( className );
 		if ( classType && ([classType isSubclassOfClass:[UIView class]] || [classType isSubclassOfClass:[UIViewController class]]) )
 		{
+			PERF( @"RenderObject '%p', set %@ '%p' to property '%@'", self, self.viewClass, self.view, name );
+			
 			[container setValue:view forKey:name];
 		}
 	}
@@ -281,6 +286,8 @@ static NSUInteger __objectSeed = 0;
 		Ivar ivar = class_getInstanceVariable( [container class], [name UTF8String] );
 		if ( ivar )
 		{
+			PERF( @"RenderObject '%p', set %@ '%p' to ivar '%@'", self, self.viewClass, self.view, name );
+			
 			[container setValue:view forKey:name];
 		}
 	}
@@ -338,6 +345,31 @@ static NSUInteger __objectSeed = 0;
 	return nil;
 }
 
+- (SamuraiRenderObject *)queryByName:(NSString *)name
+{
+	if ( nil == name )
+	{
+		return nil;
+	}
+	
+	if ( [self.dom.domName isEqualToString:name] )
+	{
+		return self;
+	}
+	
+	for ( SamuraiRenderObject * childRender in self.childs )
+	{
+		SamuraiRenderObject * result = [childRender queryByName:name];
+		
+		if ( result )
+		{
+			return result;
+		}
+	}
+	
+	return nil;
+}
+
 - (SamuraiRenderObject *)prevObject
 {
 	return [self.root findObjectWithTabIndex:(self.index - 1) exclude:self];
@@ -373,47 +405,19 @@ static NSUInteger __objectSeed = 0;
 
 #pragma mark -
 
-- (CGRect)zerolizeFrame
+- (CGSize)computeSize:(CGSize)bound
 {
-	self.bounds = CGRectZero;
-	
-	self.inset = UIEdgeInsetsZero;
-	self.border = UIEdgeInsetsZero;
-	self.margin = UIEdgeInsetsZero;
-	self.padding = UIEdgeInsetsZero;
-	
-	for ( SamuraiRenderObject * child in self.childs )
-	{
-		[child zerolizeFrame];
-	}
-	
-	return CGRectZero;
-}
-
-- (CGRect)computeFrame:(CGSize)bound
-{
-	return [self computeFrame:bound origin:CGPointZero];
-}
-
-- (CGRect)computeFrame:(CGSize)bound origin:(CGPoint)origin
-{
-	return [self zerolizeFrame];
+	return CGSizeZero;
 }
 
 - (CGFloat)computeWidth:(CGFloat)height
 {
-	CGSize bound = CGSizeMake( INVALID_VALUE, height );
-	CGRect frame = [self computeFrame:bound origin:CGPointZero];
-	
-	return frame.size.width;
+	return [self computeSize:CGSizeMake( INVALID_VALUE, height )].width;
 }
 
 - (CGFloat)computeHeight:(CGFloat)width
 {
-	CGSize bound = CGSizeMake( width, INVALID_VALUE );
-	CGRect frame = [self computeFrame:bound origin:CGPointZero];
-	
-	return frame.size.height;
+	return [self computeSize:CGSizeMake( width, INVALID_VALUE )].width;
 }
 
 #pragma mark -
@@ -434,8 +438,8 @@ static NSUInteger __objectSeed = 0;
 
 - (UIView *)createViewWithIdentifier:(NSString *)identifier
 {
-	if ( nil == self.dom )
-		return nil;
+//	if ( nil == self.dom )
+//		return nil;
 	
 	if ( nil == self.viewClass )
 		return nil;
@@ -444,10 +448,7 @@ static NSUInteger __objectSeed = 0;
 
 	if ( self.view )
 	{
-		if ( nil == self.view.renderer )
-		{
-			self.view.renderer = self;
-		}
+		self.view.renderer = self;
 
 		UIView * contentView = nil;
 
@@ -475,6 +476,9 @@ static NSUInteger __objectSeed = 0;
 			}
 		}
 
+		self.view.exclusiveTouch = YES;
+		self.view.multipleTouchEnabled = YES;
+		
 		[self.view prepareForRendering];
 	}
 
@@ -494,18 +498,15 @@ static NSUInteger __objectSeed = 0;
 		
 		if ( self.view )
 		{
-			if ( nil == self.view.renderer )
-			{
-				self.view.renderer = self;
-			}
+			self.view.renderer = self;
 			
 			if ( self.dom.domTag )
 			{
-				PERF( @"RenderObject '%p', bind view '%@' for <%@/>", self, self.viewClass, self.dom.domTag );
+				PERF( @"RenderObject '%p', bind view '%@ %p' for <%@/>", self, self.viewClass, self.view, self.dom.domTag );
 			}
 			else
 			{
-				PERF( @"RenderObject '%p', bind view '%@' for \"%@ ...\"", self, self.viewClass, self.dom.domText.length > 20 ? [self.dom.domText substringToIndex:20] : self.dom.domText );
+				PERF( @"RenderObject '%p', bind view '%@ %p' for \"%@ ...\"", self, self.viewClass, self.view, self.dom.domText.length > 20 ? [self.dom.domText substringToIndex:20] : self.dom.domText );
 			}
 			
 			UIView * contentView = nil;
@@ -530,7 +531,7 @@ static NSUInteger __objectSeed = 0;
 						[contentView addSubview:childView];
 					}
 					
-				//	[child bindOutletsTo:self.view];
+//					[child bindOutletsTo:self.view];
 				}
 			}
 			
@@ -595,13 +596,21 @@ static NSUInteger __objectSeed = 0;
 
 - (void)dump
 {
-	if ( self.childs && self.childs.count )
+	if ( DomNodeType_Text == self.dom.type )
 	{
-		PERF( @"<%@>, [%@], XY = (%.1f, %.1f), WH = (%.1f, %.1f)",
-			 self.dom.domTag,
+		PRINT( @"\"%@ ...\", [%@], XY = (%.1f, %.1f), WH = (%.1f, %.1f)",
+			 (self.dom.domText.length > 20 ? [self.dom.domText substringToIndex:20] : self.dom.domText),
 			 [self.viewClass description],
 			 self.bounds.origin.x, self.bounds.origin.y,
 			 self.bounds.size.width, self.bounds.size.height );
+	}
+	else
+	{
+		PRINT( @"<%@>, [%@], XY = (%.1f, %.1f), WH = (%.1f, %.1f)",
+			  self.dom.domTag ?: @"",
+			  [self.viewClass description],
+			  self.bounds.origin.x, self.bounds.origin.y,
+			  self.bounds.size.width, self.bounds.size.height );
 		
 		[[SamuraiLogger sharedInstance] indent];
 		
@@ -612,26 +621,7 @@ static NSUInteger __objectSeed = 0;
 		
 		[[SamuraiLogger sharedInstance] unindent];
 		
-		PERF( @"</%@>", self.dom.domTag );
-	}
-	else
-	{
-		if ( self.dom.domTag && self.dom.domTag.length )
-		{
-			PERF( @"<%@/>, [%@], XY = (%.1f, %.1f), WH = (%.1f, %.1f)",
-				 self.dom.domTag,
-				 [self.viewClass description],
-				 self.bounds.origin.x, self.bounds.origin.y,
-				 self.bounds.size.width, self.bounds.size.height );
-		}
-		else
-		{
-			PERF( @"\"%@ ...\", [%@], XY = (%.1f, %.1f), WH = (%.1f, %.1f)",
-				 (self.dom.domText.length > 20 ? [self.dom.domText substringToIndex:20] : self.dom.domText),
-				 [self.viewClass description],
-				 self.bounds.origin.x, self.bounds.origin.y,
-				 self.bounds.size.width, self.bounds.size.height );
-		}
+		PRINT( @"</%@>", self.dom.domTag ?: @"" );
 	}
 }
 
